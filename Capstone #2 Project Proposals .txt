@@ -1,0 +1,38 @@
+﻿1. Recipe Application
+Description:
+An app where users can input ingredients they have at home and get recipe suggestions, helping them minimize food waste and try new dishes.
+Features:
+* Ingredient Search: Enter ingredients to find recipes that match.
+* Recipe Details: Display cooking instructions, preparation time, and images for each recipe.
+* Favorites List: Save recipes for quick access later.
+* Nutritional Information: Include calorie count, protein, and other nutritional details (optional).
+Potential API:
+* Spoonacular API: Comprehensive recipe and food-related data.
+________________
+
+
+2. Travel Planner
+Description:
+A tool for planning trips, organizing itineraries, and exploring destinations, making travel more convenient and enjoyable.
+Features:
+* Destination Search: View top attractions and explore places by city or country.
+* Itinerary Builder: Add destinations and activities with scheduled times.
+* Weather Updates: Show current weather and forecasts for selected destinations.
+* Travel Budget Tracker: Estimate and track expenses for the trip.
+Potential APIs:
+* OpenWeatherMap API: Weather data for destinations.
+* Triposo API: Travel guides and points of interest.
+* Amadeus API: Flight and hotel information.
+________________
+
+
+3. Movie Recommendation App
+Description:
+A platform for browsing and discovering movies based on user preferences, making it easier to find what to watch next.
+Features:
+* Movie Search: Find movies or TV shows by title.
+* Movie Details: Show ratings, cast, trailers, and descriptions.
+* Recommendations: Provide personalized suggestions based on genres or previously liked movies.
+* Favorites List: Save favorite movies or TV shows for future reference.
+Potential API:
+* TMDB API: A rich database of movie and TV information.
