@@ -1,0 +1,85 @@
+﻿MealMatch Database Schema
+1. Users Table
+Stores user information for authentication and personalization.
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+* id: Unique identifier for each user.
+* username: User’s display name (must be unique).
+* email: User’s email for authentication.
+* password: Hashed password for security.
+* created_at: Timestamp when the user was created.
+________________
+
+
+2. Recipes Table
+Stores recipes saved by users.
+CREATE TABLE recipes (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    recipe_id VARCHAR(100) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    image_url TEXT,
+    source_url TEXT,
+    calories FLOAT,
+    servings INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+* id: Unique recipe entry identifier.
+* user_id: Links to the user who saved the recipe.
+* recipe_id: External recipe ID from Edamam API.
+* name: Recipe name.
+* image_url: URL of the recipe image.
+* source_url: Link to the full recipe.
+* calories: Caloric content.
+* servings: Default serving size.
+* created_at: Timestamp when the recipe was saved.
+________________
+
+
+3. Grocery List Table
+Stores ingredients added to the user’s grocery list.
+CREATE TABLE grocery_lists (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+* id: Unique identifier for grocery list items.
+* user_id: Links to the user’s account.
+* name: Ingredient name.
+* created_at: Timestamp when the item was added.
+________________
+
+
+4. Shopping List Items Table
+Stores individual grocery items linked to a shopping list.
+CREATE TABLE shopping_list_items (
+    id SERIAL PRIMARY KEY,
+    shopping_list_id INTEGER REFERENCES grocery_lists(id) ON DELETE CASCADE,
+    ingredient_name VARCHAR(255) NOT NULL,
+    quantity VARCHAR(50),
+    checked BOOLEAN DEFAULT FALSE
+);
+
+
+* id: Unique identifier for each grocery item.
+* shopping_list_id: Links to a grocery list.
+* ingredient_name: Name of the ingredient.
+* quantity: Amount needed (e.g., "2 cups").
+* checked: Marks if the ingredient is acquired.
+________________
+
+
+This schema ensures: ✅ User authentication for saving data. ✅ Recipes can be saved with details. ✅ Grocery lists store ingredients with checkable items.
+Let me know if you need changes or explanations! 🚀

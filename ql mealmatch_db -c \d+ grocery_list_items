@@ -1,0 +1,16 @@
+                                                                      Table "public.grocery_list_items"
+     Column      |            Type             | Collation | Nullable |                    Default                     | Storage  | Compression | Stats target | Description 
+-----------------+-----------------------------+-----------+----------+------------------------------------------------+----------+-------------+--------------+-------------
+ id              | integer                     |           | not null | nextval('grocery_list_items_id_seq'::regclass) | plain    |             |              | 
+ user_id         | integer                     |           | not null |                                                | plain    |             |              | 
+ ingredient_name | character varying(255)      |           | not null |                                                | extended |             |              | 
+ quantity        | character varying(50)       |           |          |                                                | extended |             |              | 
+ unit            | character varying(50)       |           |          |                                                | extended |             |              | 
+ created_at      | timestamp without time zone |           |          | CURRENT_TIMESTAMP                              | plain    |             |              | 
+ purchased       | boolean                     |           |          | false                                          | plain    |             |              | 
+Indexes:
+    "grocery_list_items_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "grocery_list_items_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+Access method: heap
+
