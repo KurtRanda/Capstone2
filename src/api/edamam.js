@@ -3,8 +3,6 @@ import axios from "axios";
 const APP_ID = import.meta.env.VITE_EDAMAM_APP_ID;
 const APP_KEY = import.meta.env.VITE_EDAMAM_APP_KEY;
 
-console.log("Edamam API ID:", APP_ID);
-console.log("Edamam API Key:", APP_KEY);
 
 
 export async function searchRecipes(query) {

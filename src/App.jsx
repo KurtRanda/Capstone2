@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RecipePage from "./pages/RecipePage.jsx";
 import RecipeDetails from "./pages/RecipeDetails";
+import RecipeResults from "./pages/RecipeResults";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -19,10 +20,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/recipes" element={<RecipePage />} />
+        <Route path="/recipe-results" element={<RecipeResults user={user} />} />
         <Route path="/recipe/:id" element={<RecipeDetails user={user} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/saved-recipes" element={<RecipeList />} />
+        <Route path="/saved-recipes" element={<RecipeList user={user} />} />
         <Route path="/grocery-list" element={<GroceryList user={user} />} /> {/* ✅ Add Grocery List Route */}
       </Routes>
     </Router>

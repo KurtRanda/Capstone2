@@ -24,14 +24,21 @@ router.post("/", authenticateToken, async (req, res) => {
     }
 });
 
-// ✅ Remove a recipe
-router.delete("/:id", authenticateToken, async (req, res) => {
+// ✅ Remove a saved recipe
+router.delete("/:recipeId", authenticateToken, async (req, res) => {
     try {
-        await Recipe.deleteRecipe(req.params.id, req.user.id);
-        res.json({ message: "Recipe removed" });
+        const { recipeId } = req.params; // ✅ Use `recipeId` instead of `id`
+        const userId = req.user.id;
+
+        console.log("🛑 Received DELETE request for Recipe ID:", recipeId, "Type:", typeof recipeId);
+
+        const deletedRecipe = await Recipe.deleteRecipe(recipeId, userId);
+        res.json({ message: "Recipe removed successfully", deletedRecipe });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
+
 
 module.exports = router;

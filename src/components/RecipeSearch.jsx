@@ -1,62 +1,82 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { searchRecipes } from "../api/edamam";
-import { saveRecipe } from "../api/backend";
-import "../App.css"; // Ensure styles are applied
+import { useNavigate } from "react-router-dom";
 
-function RecipeSearch() {
-  const [query, setQuery] = useState("");
-  const [recipes, setRecipes] = useState([]);
+// ✅ Load API credentials from .env file
+const APP_ID = import.meta.env.VITE_EDAMAM_APP_ID;
+const APP_KEY = import.meta.env.VITE_EDAMAM_APP_KEY;
 
-  const handleSearch = async () => {
-    if (!query) return;
-    const results = await searchRecipes(query);
-    console.log("API Response from Edamam:", results);  // ✅ Log the full API response
-    setRecipes(results);
-  };
+function RecipeSearch({ onRecipesFetched }) {
+    const [query, setQuery] = useState("");
+    const navigate = useNavigate();
 
-  const handleSave = async (recipe) => {
-    await saveRecipe(recipe);
-    alert("Recipe saved!");
-  };
+    console.log("🔎 All Vite Env Variables:", import.meta.env);
+    console.log("🔑 Using API Credentials:", APP_ID, APP_KEY);
 
-  return (
-    <div className="recipe-search-container">
-      <h2>Find Recipes</h2>
-      <input
-        type="text"
-        placeholder="Enter ingredients (comma-separated)..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button onClick={handleSearch}>Search</button>
+    const handleSearch = async (e) => {
+        e.preventDefault();
 
-      <div className="recipe-grid">
-        {recipes.map((recipeData, index) => {
-          const recipe = recipeData.recipe;
-          console.log("Recipe being sent to Details Page:", recipe); // ✅ Debugging
+        if (!query.trim()) {
+            alert("Please enter ingredients to search.");
+            return;
+        }
 
-          return (
-            <div className="recipe-card" key={index}>
-              <img src={recipe.image} alt={recipe.label} />
-              <h3>{recipe.label}</h3>
-              <p><strong>Calories:</strong> {Math.round(recipe.calories)}</p>
-              <p><strong>Servings:</strong> {recipe.yield}</p>
-              
-              {/* ✅ FIXED: Passing the correct recipe object */}
-              <Link to={`/recipe/${index}`} state={{ recipe }}> 
-                <button>View Details</button>
-              </Link>
+        try {
+            if (!APP_ID || !APP_KEY) {
+                throw new Error("Missing API credentials. Check your .env file.");
+            }
 
-              <button onClick={() => handleSave(recipe)}>Save Recipe</button>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+            console.log("🔍 Fetching recipes from Edamam API...");
+            const response = await fetch(`https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("✅ API Response Data:", data);
+
+            if (!data.hits || data.hits.length === 0) {
+                alert("No recipes found.");
+                return;
+            }
+
+            console.log("✅ Recipes fetched successfully:", data.hits);
+
+            // ✅ Store results in sessionStorage for persistence
+            sessionStorage.setItem("previousResults", JSON.stringify(data.hits));
+            sessionStorage.setItem("searchQuery", query);
+
+            // ✅ Pass results to RecipePage.jsx and navigate
+            if (onRecipesFetched) {
+                onRecipesFetched(data.hits, query);
+            }
+
+            // ✅ Navigate to /recipe-results
+            navigate("/recipe-results", { state: { previousResults: data.hits, searchQuery: query } });
+
+        } catch (error) {
+            console.error("❌ Error fetching recipes:", error.message);
+            alert("Failed to fetch recipes. Please check your API credentials.");
+        }
+    };
+
+    return (
+        <form onSubmit={handleSearch}>
+            <input
+                type="text"
+                placeholder="Enter ingredients..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+            />
+            <button type="submit">Search</button>
+        </form>
+    );
 }
 
 export default RecipeSearch;
+
+
+
+
 
 

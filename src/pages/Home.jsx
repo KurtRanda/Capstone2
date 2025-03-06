@@ -4,8 +4,7 @@ import RecipeSearch from "../components/RecipeSearch";
 function Home() {
   return (
     <div>
-      <h1>Search for Recipes</h1>
-      <RecipeSearch />
+      <h1>Find Recipes based on your current ingredients!</h1>
     </div>
   );
 }

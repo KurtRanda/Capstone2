@@ -3,15 +3,26 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 
-export async function getSavedRecipes() {
-  try {
-    const res = await axios.get(`${API_URL}/recipes`);
-    return res.data;
-  } catch (err) {
-    console.error("Error fetching saved recipes:", err);
-    return [];
+export const getSavedRecipes = async () => {
+  const token = localStorage.getItem("token"); // ✅ Retrieve token
+  if (!token) {
+      console.error("❌ No authentication token found!");
+      return [];
   }
-}
+
+  try {
+      const response = await axios.get("http://localhost:5000/recipes", {
+          headers: { Authorization: `Bearer ${token}` }, // ✅ Attach token
+          withCredentials: true,
+      });
+
+      console.log("✅ Fetched saved recipes:", response.data);
+      return response.data;
+  } catch (error) {
+      console.error("❌ Error fetching saved recipes:", error);
+      return [];
+  }
+};
 
 export async function saveRecipe(recipe) {
   try {
