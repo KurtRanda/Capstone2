@@ -2,7 +2,7 @@ import axios from "axios"; // Import axios for making HTTP requests
 
 // Create an axios instance with a predefined configuration
 const api = axios.create({
-    baseURL: "http://localhost:5000", // ✅ Backend API base URL (change for production)
+    baseURL: "https://mealmatch-e7s4.onrender.com", // ✅ Backend API base URL
     withCredentials: true, // ✅ Ensures cookies & authentication tokens are sent with requests
 });
 

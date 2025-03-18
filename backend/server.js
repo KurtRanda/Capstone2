@@ -7,16 +7,18 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+const allowedOrigins = [
+  "https://capstone2-bmcv.onrender.com",  // Your deployed frontend URL
+  "http://localhost:5173"  // Allow local development (Vite default)
+];
+
 app.use(cors({
-  origin: (origin, callback) => {
-      if (!origin || origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")) {
-          callback(null, true);
-      } else {
-          callback(new Error("Not allowed by CORS"));
-      }
-  },
-  credentials: true
+  origin: allowedOrigins,
+  credentials: true,  // Allow cookies and authentication headers
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
 }));
+
 
 // Import Routes
 const usersRoutes = require("./routes/users");
