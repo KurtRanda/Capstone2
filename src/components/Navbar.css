@@ -1,0 +1,113 @@
+/* ✅ Global Theme Variables */
+:root {
+    --primary-color: #4f6d7a; /* Soft desaturated teal */
+    --secondary-color: #eae0d5; /* Warm light beige */
+    --accent-color: #ff8c42; /* Soft, warm orange */
+    --text-color: #2c3639; /* Muted deep gray */
+    --background-color: #f7f5f2; /* Off-white cozy background */
+}
+
+/* ✅ Make sure Navbar width is the same on every page */
+.MuiToolbar-root {
+    width: 50vw !important; /* Keeps it centered and limited */
+    max-width: 800px; /* Prevents it from being too wide */
+    margin: 0 auto; /* Centers it */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px; /* Rounded edges for a sleek look */
+    padding: 10px 20px; /* Consistent padding */
+}
+
+/* ✅ Override Home Page specific styles that might be causing the issue */
+.home-container .MuiToolbar-root {
+    width: 50vw !important; /* Force the same width as other pages */
+    max-width: 800px !important; /* Prevent it from expanding */
+    margin: 0 auto !important; /* Center it */
+}
+.MuiAppBar-root {
+    width: 50vw !important;  /* Match width of the Navbar */
+    max-width: 800px !important; /* Prevents it from stretching too much */
+    margin: 0 auto !important; /* Center it */
+    border-radius: 10px; /* Optional: Add rounded corners */
+}
+
+
+.navbar {
+    width: 100vw; /* Ensures full viewport width */
+    border: 3px solid red;
+    max-width: 100%; /* Prevents it from shrinking */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    transition: all 0.3s ease-in-out;
+    flex-wrap: nowrap; /* Prevents items from wrapping to a new line */
+}
+
+.nav-content {
+    border: 3px solid blue;
+}
+
+/* ✅ Navbar Logo */
+.nav-logo {
+    font-size: 1.8rem; /* Larger font size for emphasis */
+    font-weight: bold; /* Make it stand out */
+    text-decoration: none; /* Remove default underline */
+    color: white; /* White text for contrast */
+}
+
+/* ✅ Navbar Links (Desktop) */
+.nav-links {
+    display: flex; /* Horizontal layout */
+    gap: 20px; /* Space between links */
+}
+
+.nav-links a {
+    color: white; /* Default text color */
+    text-decoration: none; /* Remove default underline */
+    font-weight: 500; /* Medium font weight */
+    transition: color 0.3s ease-in-out; /* Smooth transition effect */
+}
+
+/* ✅ Navbar Links Hover Effect */
+.nav-links a:hover {
+    color: var(--secondary-color); /* Change color on hover */
+}
+
+/* ✅ Authentication Buttons (Login/Signup/Logout) */
+.nav-actions {
+    display: flex; /* Align buttons in a row */
+    gap: 10px; /* Space between buttons */
+}
+
+@media (max-width: 768px) {
+    .MuiToolbar-root {
+        width: 100vw !important; /* Full width on mobile */
+        max-width: 100%; /* Allow flexibility */
+        border-radius: 0px; /* Remove rounded corners for better mobile view */
+    }
+}
+
+/* ✅ Mobile Navigation Menu (Hidden by Default) */
+.mobile-nav {
+    display: flex;
+    flex-direction: column; /* Stack links vertically */
+    padding: 10px;
+    background-color: var(--primary-color); /* Match navbar color */
+    text-align: center; /* Center align links */
+}
+
+/* ✅ Mobile Navigation Links */
+.mobile-nav a {
+    padding: 10px; /* Add padding for clickable area */
+    color: white; /* White text for visibility */
+    text-decoration: none; /* Remove default underline */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Subtle separator between links */
+}
+
+/* ✅ Mobile Navigation Hover Effect */
+.mobile-nav a:hover {
+    background-color: #3d565f; /* Slightly darker background on hover */
+}

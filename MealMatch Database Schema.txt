@@ -79,7 +79,3 @@ CREATE TABLE shopping_list_items (
 * quantity: Amount needed (e.g., "2 cups").
 * checked: Marks if the ingredient is acquired.
 ________________
-
-
-This schema ensures: ✅ User authentication for saving data. ✅ Recipes can be saved with details. ✅ Grocery lists store ingredients with checkable items.
-Let me know if you need changes or explanations! 🚀

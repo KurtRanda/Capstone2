@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSavedRecipes } from "../api/backend";
+import { getSavedRecipes } from "../api/backend"; // ✅ API call to fetch saved recipes
 import axios from "axios";
 
+/**
+ * RecipeList Component
+ * 
+ * This component displays a user's saved recipes and provides functionality to:
+ * - Search through saved recipes by filtering based on ingredients.
+ * - Navigate to the detailed view of a selected recipe.
+ * - Remove a saved recipe from the database.
+ */
 function RecipeList({ user }) { 
   const navigate = useNavigate();
-  const [recipes, setRecipes] = useState([]);
-  const [searchIngredient, setSearchIngredient] = useState(""); // ✅ Store search input
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [recipes, setRecipes] = useState([]); // ✅ Stores all saved recipes
+  const [searchIngredient, setSearchIngredient] = useState(""); // ✅ Stores user input for filtering
+  const [filteredRecipes, setFilteredRecipes] = useState([]); // ✅ Stores filtered results based on search
 
+  /**
+   * Fetch saved recipes from the backend when the component mounts.
+   */
   useEffect(() => {
     async function fetchData() {
       console.log("📥 Fetching saved recipes...");
@@ -16,14 +27,15 @@ function RecipeList({ user }) {
       setRecipes(data);
       setFilteredRecipes(data); // ✅ Initially, show all recipes
     }
-
     fetchData();
   }, []);
 
-  // ✅ Update filtered recipes when the search query changes
+  /**
+   * Update the filtered recipes when the search input changes.
+   */
   useEffect(() => {
     if (searchIngredient.trim() === "") {
-      setFilteredRecipes(recipes);
+      setFilteredRecipes(recipes); // ✅ Reset to all recipes if search is empty
     } else {
       const filtered = recipes.filter(recipe =>
         (recipe.ingredients ? recipe.ingredients.split(", ") : []).some(ingredient =>
@@ -36,10 +48,14 @@ function RecipeList({ user }) {
 
   console.log("🔍 Filtered Recipes Data:", filteredRecipes);
 
-  // ✅ Function to navigate to recipe details
+  /**
+   * Navigate to Recipe Details Page
+   * Formats the selected recipe's data and navigates to the RecipeDetails page.
+   */
   const handleRecipeClick = (recipe) => {
     console.log("📌 Navigating to RecipeDetails from saved recipes");
 
+    // ✅ Format recipe to match API response structure
     const formattedRecipe = {
         uri: `http://www.edamam.com/ontologies/edamam.owl#recipe_${recipe.recipe_id}`,
         label: recipe.name,
@@ -55,13 +71,15 @@ function RecipeList({ user }) {
             recipe: formattedRecipe, 
             previousResults: recipes, 
             searchQuery: "",
-            fromSavedRecipes: true // ✅ Pass this flag
+            fromSavedRecipes: true // ✅ Indicates user is coming from saved recipes
         }
     });
-};
+  };
 
-
-  // ✅ Function to Remove a Recipe
+  /**
+   * Remove a Saved Recipe
+   * Sends a DELETE request to remove the recipe from the database and updates state.
+   */
   const handleRemoveRecipe = async (recipeId) => {
     if (!user || !user.id) { 
         alert("You need to log in to remove recipes!");
@@ -81,6 +99,7 @@ function RecipeList({ user }) {
             headers: { Authorization: `Bearer ${token}` },
         });
 
+        // ✅ Update state by filtering out removed recipe
         setRecipes((prevRecipes) => prevRecipes.filter((r) => r.recipe_id !== recipeId));
         setFilteredRecipes((prevRecipes) => prevRecipes.filter((r) => r.recipe_id !== recipeId));
         alert("Recipe removed successfully!");
@@ -119,6 +138,7 @@ function RecipeList({ user }) {
                 borderRadius: "5px"
               }}
             >
+              {/* ✅ Recipe Image */}
               <img src={recipe.image_url} alt={recipe.name} style={{ width: "100px", height: "100px" }} />
               <h3>{recipe.name}</h3>
               <p>Calories: {recipe.calories}</p>

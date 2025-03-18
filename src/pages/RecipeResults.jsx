@@ -3,15 +3,27 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios"; 
 import { Snackbar, Alert } from "@mui/material"; 
 
+/**
+ * RecipeResults Component
+ * 
+ * Displays recipe search results based on user queries. Features:
+ * - Retrieves previous search results from `location.state` or `sessionStorage`.
+ * - Allows navigation to detailed recipe pages.
+ * - Supports saving recipes to the user's account.
+ * - Provides real-time search query updates and filtering.
+ */
 function RecipeResults({ user }) { 
     const navigate = useNavigate();
     const location = useLocation();
-    const [recipes, setRecipes] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [recipes, setRecipes] = useState([]); // ✅ Stores search results
+    const [searchQuery, setSearchQuery] = useState(""); // ✅ Stores search input
+    const [snackbarMessage, setSnackbarMessage] = useState(""); // ✅ Stores notification messages
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // ✅ Notification type
+    const [openSnackbar, setOpenSnackbar] = useState(false); // ✅ Controls Snackbar visibility
     
+    /**
+     * Loads previous search results from `location.state` or `sessionStorage`.
+     */
     useEffect(() => {
         console.log("🔄 Loading previous search results...");
         
@@ -41,18 +53,22 @@ function RecipeResults({ user }) {
             setSearchQuery(storedSearchQuery);
         }
     }, [location.state]);
-    
 
-    // ✅ Function to navigate to recipe details
+    /**
+     * Navigates to RecipeDetails page with selected recipe details.
+     * @param {Object} recipe - The selected recipe object.
+     */
     const handleRecipeClick = (recipe) => {
         console.log("📌 Navigating to RecipeDetails from search results");
         navigate(`/recipe/${recipe.uri.split("#recipe_")[1]}`, {
             state: { recipe, previousResults: recipes, searchQuery }
         });
     };
-    
 
-    // ✅ Function to save a recipe
+    /**
+     * Saves a recipe to the user's account.
+     * @param {Object} recipe - The recipe to be saved.
+     */
     const handleSaveRecipe = async (recipe) => {
         if (!user) {
             alert("You need to log in to save recipes!");
@@ -96,12 +112,11 @@ function RecipeResults({ user }) {
         }
     };
     
-    
-        
     return (
         <div>
             <h2>Recipe Search Results</h2>
 
+            {/* ✅ Search bar for updating search query */}
             <input
                 type="text"
                 placeholder="Search by ingredient..."
@@ -124,6 +139,7 @@ function RecipeResults({ user }) {
                                 key={index} 
                                 style={{ cursor: "pointer", border: "1px solid #ccc", padding: "10px", margin: "10px", borderRadius: "5px" }}
                             >
+                                {/* ✅ Recipe Image */}
                                 <img src={recipe.image} alt={recipe.label} style={{ width: "100px", height: "100px" }} />
                                 <h3>{recipe.label}</h3>
                                 <p>Calories: {Math.round(recipe.calories)}</p>
@@ -139,13 +155,20 @@ function RecipeResults({ user }) {
                                     View Details
                                 </button>
 
-                                {/* ✅ Save Recipe Button - Fixed */}
+                                {/* ✅ Save Recipe Button */}
                                 <button 
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleSaveRecipe(recipe); // ✅ Passes recipe correctly
                                     }}
-                                    style={{ marginTop: "10px", padding: "5px 10px", cursor: "pointer", background: "green", color: "white", marginLeft: "10px" }}
+                                    style={{ 
+                                        marginTop: "10px", 
+                                        padding: "5px 10px", 
+                                        cursor: "pointer", 
+                                        background: "green", 
+                                        color: "white", 
+                                        marginLeft: "10px" 
+                                    }}
                                 >
                                     Save Recipe
                                 </button>
@@ -171,6 +194,7 @@ function RecipeResults({ user }) {
 }
 
 export default RecipeResults;
+
 
 
 

@@ -9,10 +9,10 @@ class User {
   }
 
   // ✅ Create a new user
-  static async createUser(username, email, password) {
+  static async createUser(email, password) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email",
+      "INSERT INTO users (email, password) VALUES ($1, $2, $3) RETURNING id, username, email",
       [username, email, hashedPassword]
     );
     return result.rows[0];

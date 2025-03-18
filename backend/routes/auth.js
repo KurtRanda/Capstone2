@@ -9,12 +9,12 @@ const SECRET_KEY = process.env.SECRET_KEY || "mysecret";
 
 // **User Signup with Role Assignment**
 router.post("/signup", async (req, res) => {
-    const { username, email, password, role = "user" } = req.body;  // Default role is "user"
+    const { email, password, role = "user" } = req.body;  // Default role is "user"
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const result = await pool.query(
             "INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, username, email, role",
-            [username, email, hashedPassword, role]
+            [ email, hashedPassword, role]
         );
         res.status(201).json({ message: "User created", user: result.rows[0] });
     } catch (err) {
