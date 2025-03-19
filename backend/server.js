@@ -13,8 +13,14 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,  // Allow cookies and authentication headers
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,  // ✅ Allow cookies and authentication headers
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
 }));
