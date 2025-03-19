@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 });
 
 // ✅ POST a new user (Signup)
-router.post("/", async (req, res) => {
+router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
   try {
     const newUser = await User.createUser(email, password);
