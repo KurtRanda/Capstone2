@@ -84,8 +84,8 @@ function RecipeResults({ user }) {
         try {
             console.log("📝 Saving Recipe:", recipe);
     
-            const response = await axios.post(
-                "http://localhost:5000/recipes",
+            const response = await api.post(
+                "/recipes",
                 {
                     name: recipe.label,
                     imageUrl: recipe.image,
