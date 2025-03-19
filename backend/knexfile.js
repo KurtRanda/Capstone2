@@ -11,4 +11,17 @@ module.exports = {
       directory: "./seeds",
     },
   },
+  production: {
+    client: "pg",
+    connection: {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }, // ✅ Required for Render's PostgreSQL
+    },
+    migrations: {
+      directory: "./migrations",
+    },
+    seeds: {
+      directory: "./seeds",
+    },
+  },
 };

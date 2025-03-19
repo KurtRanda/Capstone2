@@ -11,9 +11,13 @@ import axios from "axios";
  * - Sends a signup request to the backend API.
  * - Displays an alert based on success or failure.
  */
+
 function Signup() {
     const [email, setEmail] = useState(""); // ✅ Stores email input
     const [password, setPassword] = useState(""); // ✅ Stores password input
+
+    // ✅ Load Backend URL from .env file
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
     /**
      * Handles the signup process by sending user credentials to the backend.
@@ -22,7 +26,7 @@ function Signup() {
     const handleSignup = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:5000/auth/signup", { email, password });
+            await axios.post(`${backendUrl}/auth/signup`, { email, password }, { withCredentials: true });
             alert("Signup successful! Please log in."); // ✅ Success message
         } catch (err) {
             alert("Signup failed!"); // ❌ Error message
