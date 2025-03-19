@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/api"; // ✅ Import configured API instance
 import { List, ListItem, ListItemText, Button, Typography, Container, Paper } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -18,45 +18,40 @@ function GroceryList({ user }) {
         if (!user) return;
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get(`http://localhost:5000/grocery-list/`, {
+            const res = await api.get(`/grocery-list/`, {
                 headers: { Authorization: `Bearer ${token}` },
-                withCredentials: true,
             });
             setGroceryItems(res.data);
         } catch (err) {
-            console.error("Error fetching grocery list:", err.response ? err.response.data : err);
+            console.error("❌ Error fetching grocery list:", err.response ? err.response.data : err);
         }
     };
 
     const togglePurchased = async (itemId) => {
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.patch(
-                `http://localhost:5000/grocery-list/${itemId}/toggle`,
-                {},
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                    withCredentials: true,
-                }
+            await api.patch(`/grocery-list/${itemId}/toggle`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setGroceryItems((prevItems) =>
+                prevItems.map(item =>
+                    item.id === itemId ? { ...item, purchased: !item.purchased } : item
+                )
             );
-            setGroceryItems(groceryItems.map(item =>
-                item.id === itemId ? { ...item, purchased: !item.purchased } : item
-            ));
         } catch (err) {
-            console.error("Error updating item:", err.response ? err.response.data : err);
+            console.error("❌ Error updating item:", err.response ? err.response.data : err);
         }
     };
 
     const handleRemoveItem = async (itemId) => {
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:5000/grocery-list/${itemId}`, {
+            await api.delete(`/grocery-list/${itemId}`, {
                 headers: { Authorization: `Bearer ${token}` },
-                withCredentials: true,
             });
-            setGroceryItems(groceryItems.filter(item => item.id !== itemId));
+            setGroceryItems((prevItems) => prevItems.filter(item => item.id !== itemId));
         } catch (err) {
-            console.error("Error removing item:", err.response ? err.response.data : err);
+            console.error("❌ Error removing item:", err.response ? err.response.data : err);
         }
     };
 
@@ -68,9 +63,9 @@ function GroceryList({ user }) {
                     maxWidth: "600px",
                     margin: "auto",
                     padding: "20px",
-                    backgroundColor: "rgba(255, 255, 255, 0.85)", // ✅ Soft white background with transparency
-                    borderRadius: "12px", // ✅ Rounded corners for a card-like effect
-                    backdropFilter: "blur(8px)", // ✅ Slight blur effect for better readability
+                    backgroundColor: "rgba(255, 255, 255, 0.85)", 
+                    borderRadius: "12px",
+                    backdropFilter: "blur(8px)",
                 }}
             >
                 <Typography variant="h4" sx={{ marginBottom: "20px", color: "#2c3639", fontWeight: "bold" }}>
@@ -124,6 +119,5 @@ function GroceryList({ user }) {
 }
 
 export default GroceryList;
-
 
 

@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://mealmatch-e7s4.onrender.com";
+
 const api = axios.create({
-    baseURL: "https://mealmatch-e7s4.onrender.com",
+    baseURL: API_BASE_URL,
     withCredentials: true, // ✅ Ensures cookies & authentication tokens are sent
 });
 

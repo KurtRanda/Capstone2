@@ -1,71 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/api"; // ✅ Use configured API instance
 import {
     Button, Container, List, ListItem, ListItemText, Snackbar, Alert, 
     Typography, Card, CardMedia, CardContent, Chip, Grid
 } from "@mui/material";
 
-/**
- * RecipeDetails Component
- * -------------------------
- * Displays detailed information about a recipe, including ingredients, nutritional info,
- * and source details. Allows users to save recipes and add ingredients to their grocery list.
- * 
- * Props:
- * - user: The currently logged-in user object (if any)
- */
 function RecipeDetails({ user }) { 
-    const { id } = useParams(); // Extract recipe ID from URL params
-    const location = useLocation(); // Retrieve state data passed from navigation
-    const navigate = useNavigate(); // Handle navigation between pages
+    const { id } = useParams(); 
+    const location = useLocation(); 
+    const navigate = useNavigate(); 
 
-    const [recipe, setRecipe] = useState(null); // Store recipe details
-    const [ingredients, setIngredients] = useState([]); // Store ingredients list
-    const [openSnackbar, setOpenSnackbar] = useState(false); // Control success/error messages
-    const [snackbarMessage, setSnackbarMessage] = useState(""); // Snackbar message content
-    const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // Message type (success/error)
+    const [recipe, setRecipe] = useState(null);
+    const [ingredients, setIngredients] = useState([]);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-    /**
-     * useEffect: Load recipe details from navigation state
-     * If coming from search results, retrieve previous search state and store in sessionStorage
-     */
     useEffect(() => {
         console.log("🔍 Received previous search state:", location.state);
     
         if (location.state?.recipe) {
             setRecipe(location.state.recipe);
-    
-            // Handle both API-fetched and saved recipes (convert string to array if needed)
             if (location.state.recipe.ingredientLines) {
                 setIngredients(location.state.recipe.ingredientLines);
             } else if (location.state.recipe.ingredients) {
                 setIngredients(location.state.recipe.ingredients.split(", "));
             }
         }
-    
+
         if (location.state?.previousResults) {
             sessionStorage.setItem("previousResults", JSON.stringify(location.state.previousResults));
         }
-    
         if (location.state?.searchQuery) {
             sessionStorage.setItem("searchQuery", location.state.searchQuery);
         }
     }, [location.state]);
 
-    /**
-     * useEffect: Update ingredient list when recipe changes
-     */
     useEffect(() => {
         if (recipe?.ingredientLines) {
             setIngredients(recipe.ingredientLines);
         }
     }, [recipe]);
 
-    /**
-     * Handle navigation back to the correct previous page.
-     * If user came from search results, return to search; otherwise, return to saved recipes.
-     */
     const handleGoBack = () => {
         console.log("🔙 Attempting to return to previous page...");
     
@@ -84,10 +61,6 @@ function RecipeDetails({ user }) {
         }
     };
 
-    /**
-     * Save Recipe to User's Account
-     * Requires authentication and sends a POST request to the backend.
-     */
     const handleSaveRecipe = async () => {
         if (!user) {
             alert("You need to log in to save recipes!");
@@ -103,8 +76,8 @@ function RecipeDetails({ user }) {
         console.log("📡 Sending request to save recipe...");
 
         try {
-            const response = await axios.post(
-                "http://localhost:5000/recipes",
+            const response = await api.post(
+                "/recipes",
                 {
                     name: recipe.label,
                     imageUrl: recipe.image,
@@ -131,9 +104,6 @@ function RecipeDetails({ user }) {
         }
     };
 
-    /**
-     * Save an individual ingredient to the user's grocery list.
-     */
     const saveIngredientToGroceryList = async (ingredient) => {
         if (!user) {
             alert("You need to log in to save ingredients!");
@@ -147,8 +117,8 @@ function RecipeDetails({ user }) {
         }
 
         try {
-            const response = await axios.post(
-                "http://localhost:5000/grocery-list",
+            const response = await api.post(
+                "/grocery-list",
                 {
                     userId: user.id,
                     ingredientName: ingredient,
@@ -156,8 +126,7 @@ function RecipeDetails({ user }) {
                     unit: "",
                 },
                 {
-                    withCredentials: true, 
-                    headers: { Authorization: `Bearer ${token}` }, 
+                    headers: { Authorization: `Bearer ${token}` }
                 }
             );
 
@@ -182,14 +151,11 @@ function RecipeDetails({ user }) {
 
     return (
         <Container maxWidth="md">
-            {/* ✅ Back Button (Dynamically Switches) */}
             <Button type="button" onClick={handleGoBack} sx={{ mb: 2 }}>
                 {location.state?.previousResults ? "🔙 Back to Search Results" : "📁 Back to Saved Recipes"}
             </Button>
     
-            {/* ✅ Recipe Card */}
             <Card sx={{ maxWidth: 600, margin: "auto", mt: 4, p: 2, boxShadow: 3 }}>
-                {/* ✅ Recipe Image */}
                 <CardMedia
                     component="img"
                     height="300"
@@ -199,7 +165,6 @@ function RecipeDetails({ user }) {
                 <CardContent>
                     <Typography variant="h4" gutterBottom>{recipe.label}</Typography>
     
-                    {/* ✅ Recipe Overview */}
                     <Typography variant="subtitle1" color="textSecondary">
                         <strong>Source:</strong> {recipe.source || "Unknown"} | 
                         <strong> Dish Type:</strong> {recipe.dishType?.join(", ") || "N/A"} | 
@@ -209,7 +174,6 @@ function RecipeDetails({ user }) {
                     <Typography variant="body1"><strong>Calories:</strong> {Math.round(recipe.calories) || "N/A"}</Typography>
                     <Typography variant="body1"><strong>Servings:</strong> {recipe.yield || "N/A"}</Typography>
     
-                    {/* ✅ Dietary Labels */}
                     <Typography variant="h6" sx={{ mt: 2 }}>Dietary Labels:</Typography>
                     <Grid container spacing={1}>
                         {recipe.dietLabels?.map((label, index) => (
@@ -224,7 +188,6 @@ function RecipeDetails({ user }) {
                         ))}
                     </Grid>
     
-                    {/* ✅ Ingredients List */}
                     <Typography variant="h6" sx={{ mt: 2 }}>Ingredients:</Typography>
                     {ingredients.length > 0 ? (
                         <List>
@@ -246,7 +209,6 @@ function RecipeDetails({ user }) {
                         <Typography>No ingredients available.</Typography>
                     )}
     
-                    {/* ✅ Save Recipe & View Full Recipe Buttons */}
                     <Button 
                         variant="contained" 
                         color="primary" 
@@ -269,7 +231,6 @@ function RecipeDetails({ user }) {
                 </CardContent>
             </Card>
     
-            {/* ✅ Snackbar Confirmation */}
             <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: "100%" }}>
                     {snackbarMessage}
@@ -278,4 +239,5 @@ function RecipeDetails({ user }) {
         </Container>
     );
 }
+
 export default RecipeDetails;

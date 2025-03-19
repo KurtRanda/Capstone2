@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSavedRecipes } from "../api/backend"; // ✅ API call to fetch saved recipes
-import axios from "axios";
+import api from "../api/api"; // ✅ Import API instance from api.js
 
 /**
  * RecipeList Component
@@ -23,9 +22,17 @@ function RecipeList({ user }) {
   useEffect(() => {
     async function fetchData() {
       console.log("📥 Fetching saved recipes...");
-      const data = await getSavedRecipes();
-      setRecipes(data);
-      setFilteredRecipes(data); // ✅ Initially, show all recipes
+      try {
+        const token = localStorage.getItem("token");
+        const res = await api.get("/recipes", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        setRecipes(res.data);
+        setFilteredRecipes(res.data); // ✅ Initially, show all recipes
+      } catch (error) {
+        console.error("❌ Error fetching saved recipes:", error.response?.data || error);
+      }
     }
     fetchData();
   }, []);
@@ -95,7 +102,7 @@ function RecipeList({ user }) {
     try {
         console.log("🛑 Attempting to remove recipe with ID:", recipeId);
 
-        await axios.delete(`http://localhost:5000/recipes/${encodeURIComponent(recipeId)}`, {
+        await api.delete(`/recipes/${encodeURIComponent(recipeId)}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -180,6 +187,7 @@ function RecipeList({ user }) {
 }
 
 export default RecipeList;
+
 
 
 
