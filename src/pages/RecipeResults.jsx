@@ -76,6 +76,10 @@ function RecipeResults({ user }) {
         }
     
         const token = localStorage.getItem("token");
+    
+        // ✅ Debugging log
+        console.log("🔍 Token Before API Call:", token);
+    
         if (!token) {
             alert("Authentication token missing! Please log in again.");
             return;
@@ -93,10 +97,10 @@ function RecipeResults({ user }) {
                     recipeId: recipe.uri.split("#recipe_")[1],
                     calories: Math.round(recipe.calories),
                     servings: recipe.yield,
-                    ingredientLines: recipe.ingredientLines || [] // ✅ Store only ingredients
+                    ingredientLines: recipe.ingredientLines || []
                 },
                 {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: { Authorization: `Bearer ${token}` } // ✅ Ensure token is sent
                 }
             );
     
@@ -111,6 +115,7 @@ function RecipeResults({ user }) {
             setOpenSnackbar(true);
         }
     };
+    
     
     return (
         <div>
