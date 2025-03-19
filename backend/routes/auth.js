@@ -5,7 +5,9 @@ const pool = require("../config/db");
 require("dotenv").config();
 
 const router = express.Router();
-const SECRET_KEY = process.env.SECRET_KEY || "mysecret";
+const SECRET_KEY = process.env.SECRET_KEY || "default_secret_key";
+console.log("🔑 Loaded SECRET_KEY:", SECRET_KEY);
+
 
 // **User Signup with Role Assignment**
 router.post("/signup", async (req, res) => {
@@ -50,7 +52,7 @@ router.post("/login", async (req, res) => {
         console.log("✅ Password is correct");
 
         const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role },
+            { id: user.id, email: user.email, role: user.role }, // ✅ Use email instead
             SECRET_KEY,
             { expiresIn: "1h" }
         );
