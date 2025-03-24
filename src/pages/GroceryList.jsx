@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
-import api from "../api/api"; 
-import { List, ListItem, ListItemText, Button, Typography, Container, Paper } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
+import React, { useEffect, useState } from "react";
+import { Container, Paper, Typography, List, ListItem, ListItemText, Button, CircularProgress } from "@mui/material";
+import { CheckCircle as CheckCircleIcon, Cancel as CancelIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import api from "../api/api";
 
 function GroceryList({ user }) {
-    const [groceryItems, setGroceryItems] = useState([]);
+    const [groceryItems, setGroceryItems] = useState([]); 
+    const [loading, setLoading] = useState(true); // Track loading state
 
     useEffect(() => {
         if (user) {
             fetchGroceryList();
         }
     }, [user]);
-    
+
     const fetchGroceryList = async () => {
         if (!user) return;
         try {
@@ -21,21 +20,13 @@ function GroceryList({ user }) {
             const res = await api.get(`/grocery-list/`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-    
-            // Log the response data to check the structure
-            console.log("✅ Grocery List Response:", res.data);
-    
-            // Access the groceryList key in the response and set the state
-        if (res.data.groceryList && Array.isArray(res.data.groceryList)) {
-            setGroceryItems(res.data.groceryList);
-        } else {
-            setGroceryItems([]); // In case the structure is different or empty
-        }
+            setGroceryItems(res.data.groceryList); // Assuming the API returns an object with 'groceryList'
         } catch (err) {
             console.error("❌ Error fetching grocery list:", err.response ? err.response.data : err);
+        } finally {
+            setLoading(false); // Stop loading once data is fetched
         }
     };
-    
 
     const togglePurchased = async (itemId) => {
         try {
@@ -73,7 +64,7 @@ function GroceryList({ user }) {
                     maxWidth: "600px",
                     margin: "auto",
                     padding: "20px",
-                    backgroundColor: "rgba(255, 255, 255, 0.85)", 
+                    backgroundColor: "rgba(255, 255, 255, 0.85)",
                     borderRadius: "12px",
                     backdropFilter: "blur(8px)",
                 }}
@@ -82,7 +73,13 @@ function GroceryList({ user }) {
                     Your Grocery List 🛒
                 </Typography>
 
-                {groceryItems.length === 0 ? (
+                {/* Loading indicator styled to match other loading indicators */}
+                {loading ? (
+                    <div style={{ textAlign: "center", marginTop: "20px" }}>
+                        <CircularProgress />
+                        <p>Loading your grocery list...</p>
+                    </div>
+                ) : groceryItems.length === 0 ? (
                     <Typography variant="body1" sx={{ color: "gray" }}>
                         Your list is empty!
                     </Typography>
