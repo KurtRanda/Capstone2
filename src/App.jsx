@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import "./App.css"; // ✅ Import global styles
 import RecipeList from "./pages/RecipeList";
-import GroceryList from "./pages/GroceryList.jsx"; // ✅ Import Grocery List page
+import GroceryList from "./pages/GroceryList.jsx"; 
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";

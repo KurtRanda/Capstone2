@@ -88,24 +88,23 @@ router.post("/login", async (req, res) => {
         // ✅ Generate token securely
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role },
-            SECRET_KEY,
+            process.env.JWT_SECRET, // Ensure that you use the environment variable for the secret
             { expiresIn: "1h" }
         );
 
-        // ✅ Send token securely (do NOT log it!)
-        res.cookie("token", token, { 
-            httpOnly: true, 
-            secure: process.env.NODE_ENV === "production", // ✅ Secure cookies in production
-            sameSite: "Strict" 
+        // ✅ Send token in response body
+        res.json({
+            message: "Login successful",
+            token,  // Return token directly in response body
+            user: { id: user.id, email: user.email, role: user.role }
         });
-
-        res.json({ message: "Login successful", user: { id: user.id, email: user.email, role: user.role } });
 
     } catch (err) {
         console.error("❌ Login Error:", err.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 // **🔒 Secure User Logout**
 router.post("/logout", (req, res) => {
