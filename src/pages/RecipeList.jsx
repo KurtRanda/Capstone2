@@ -27,9 +27,19 @@ function RecipeList({ user }) {
                 const res = await api.get("/recipes", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-
-                setRecipes(res.data);
-                setFilteredRecipes(res.data);
+    
+                // Log the response data to check the structure
+                console.log("✅ Recipes Response:", res.data);
+    
+                // Assuming res.data is an array, if not adjust accordingly
+                if (Array.isArray(res.data)) {
+                    setRecipes(res.data);
+                    setFilteredRecipes(res.data);
+                } else {
+                    // If res.data is an object (e.g., { recipes: [...] })
+                    setRecipes(res.data.recipes || []); // Adjust key name if needed
+                    setFilteredRecipes(res.data.recipes || []);
+                }
             } catch (error) {
                 console.error("❌ Error fetching saved recipes:", error.response?.data || error);
             } finally {
@@ -38,7 +48,7 @@ function RecipeList({ user }) {
         }
         fetchData();
     }, []);
-
+    
     useEffect(() => {
         if (searchIngredient.trim() === "") {
             setFilteredRecipes(recipes);

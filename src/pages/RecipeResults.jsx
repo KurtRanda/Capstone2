@@ -55,7 +55,7 @@ function RecipeResults({ user }) {
                     const response = await api.get("/recipes", {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-
+                    console.log("✅ Recipes Response:", res.data);           
                     const savedSet = new Set(response.data.map(recipe => recipe.recipe_id));
                     setSavedRecipes(savedSet); // ✅ Store saved recipes
                 } catch (error) {
