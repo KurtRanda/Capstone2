@@ -24,20 +24,28 @@ function RecipeResults({ user }) {
         let storedResults = location.state?.previousResults || sessionStorage.getItem("previousResults");
         let storedSearchQuery = location.state?.searchQuery || sessionStorage.getItem("searchQuery");
     
-        try {
-            const parsedResults = storedResults ? JSON.parse(storedResults) : [];
-            setRecipes(parsedResults);
-        } catch (error) {
-            console.error("Error parsing previousResults:", error);
-            setRecipes([]); 
+        // If storedResults is already an object (or an array), no need to parse
+        if (storedResults) {
+            if (typeof storedResults === "string") {
+                try {
+                    const parsedResults = JSON.parse(storedResults); // Only parse if it's a string
+                    setRecipes(parsedResults);
+                } catch (error) {
+                    console.error("Error parsing previousResults:", error);
+                    setRecipes([]); // fallback to empty array if parsing fails
+                }
+            } else {
+                setRecipes(storedResults); // Directly use if it's already an object
+            }
         }
-
+    
         if (storedSearchQuery) {
             setSearchQuery(storedSearchQuery);
         }
-
+    
         setLoading(false);
     }, [location.state]);
+    
 
     useEffect(() => {
         async function fetchSavedRecipes() {

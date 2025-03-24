@@ -35,7 +35,7 @@ function Login({ setUser }) {
 
             if (res.data.token) {
                 localStorage.setItem("token", res.data.token);  
-                console.log("🟢 Token stored:", res.data.token);
+                console.log("🟢 Token stored");
                 setUser(res.data.user);
                 setSnackbarMessage("Login successful!");
                 setSnackbarSeverity("success");
