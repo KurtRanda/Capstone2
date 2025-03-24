@@ -1,22 +1,24 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://mealmatch-e7s4.onrender.com";
+// Use Vite's import.meta.env for environment variables
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5001"; // Default to local backend
 
 const api = axios.create({
-    baseURL: API_BASE_URL,
-    withCredentials: true, // ✅ Ensures cookies & authentication tokens are sent
+  baseURL: API_BASE_URL,
+  withCredentials: true,
 });
 
-// ✅ Attach the token to every request
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token"); // 🔑 Retrieve the token
+// Attach token to every request
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`; // 🔒 Attach token
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-}, (error) => {
-    return Promise.reject(error);
-});
+  },
+  (error) => Promise.reject(error)
+);
 
 export default api;
 

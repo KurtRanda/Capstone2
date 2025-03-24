@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 const allowedOrigins = [
-  "https://capstone2-bmcv.onrender.com",  // Your deployed frontend URL
+  "https://capstone2-bmcv.onrender.com",  // Deployed frontend URL
   "http://localhost:5173"  // Allow local development (Vite default)
 ];
 
@@ -31,7 +31,7 @@ const usersRoutes = require("./routes/users");
 const recipesRoutes = require("./routes/recipes");
 const ingredientsRoutes = require("./routes/ingredients");
 const authRoutes = require("./routes/auth");
-const groceryListRoutes = require("./routes/groceryList");
+const groceryListRoutes = require("./routes/groceryLists");
 
 // Use Routes
 app.use("/users", usersRoutes);

@@ -3,9 +3,10 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import RecipeSearch from "../../components/RecipeSearch";
 import { BrowserRouter } from "react-router-dom";
 import 'whatwg-fetch';
+import { vi } from "vitest"
 
 beforeAll(() => {
-    global.alert = jest.fn();
+    global.alert = vi.fn();
   });
   
 describe("RecipeSearch Component", () => {

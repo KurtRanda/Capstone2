@@ -1,15 +1,27 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import GroceryList from "../GroceryList";
-import axios from "axios";
+import { vi } from "vitest";
+import api from "../../api/api"; 
 
-jest.mock("axios");
+// ✅ Mock the `api` module, NOT `axios`
+vi.mock("../../api/api", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    delete: vi.fn(),
+    interceptors: { request: { use: vi.fn() } }, // ✅ Mock interceptors
+  },
+}));
 
 describe("GroceryList Component", () => {
   const mockUser = { id: "test-user", email: "test@example.com" };
 
   beforeEach(() => {
-    axios.get.mockResolvedValue({ data: [{ id: 1, ingredient_name: "Tomatoes", quantity: "2", unit: "pcs", purchased: false }] });
+    // ✅ Use `api.get`, NOT `axios.get`
+    api.get.mockResolvedValue({
+      data: [{ id: 1, ingredient_name: "Tomatoes", quantity: "2", unit: "pcs", purchased: false }],
+    });
   });
 
   test("renders grocery list with items", async () => {
@@ -23,7 +35,7 @@ describe("GroceryList Component", () => {
   });
 
   test("removes an item when 'Remove' button is clicked", async () => {
-    axios.delete.mockResolvedValue({}); // Mock successful delete response
+    api.delete.mockResolvedValue({}); // ✅ Mock `api.delete`
 
     render(<GroceryList user={mockUser} />);
 
@@ -40,7 +52,7 @@ describe("GroceryList Component", () => {
   });
 
   test("shows empty state message when no items exist", async () => {
-    axios.get.mockResolvedValue({ data: [] }); // Mock empty grocery list
+    api.get.mockResolvedValue({ data: [] }); // ✅ Mock empty grocery list
 
     render(<GroceryList user={mockUser} />);
 
@@ -49,4 +61,3 @@ describe("GroceryList Component", () => {
     });
   });
 });
-

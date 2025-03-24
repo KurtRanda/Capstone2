@@ -1,98 +1,81 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AppBar, Toolbar, Button, IconButton } from "@mui/material";
+import { AppBar, Toolbar, Button, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import "./Navbar.css"; // ✅ Import custom styling for the navbar
+import "./Navbar.css"; // ✅ Keep custom styling
 
-/**
- * Navbar component for navigation across the application.
- * Displays different links based on user authentication status.
- * 
- * @param {Object} props - Component props
- * @param {Object|null} props.user - User object if logged in, otherwise null.
- * @param {Function} props.setUser - Function to update the user state after logout.
- */
 function Navbar({ user, setUser }) {
-    const navigate = useNavigate(); // ✅ Hook for programmatic navigation
-    const [mobileOpen, setMobileOpen] = useState(false); // ✅ State to manage mobile menu visibility
+    const navigate = useNavigate();
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const isMobile = useMediaQuery("(max-width: 900px)"); // ✅ Responsive breakpoint
 
-    /**
-     * Handles user logout by removing the authentication token and redirecting to login.
-     */
     const handleLogout = () => {
-        localStorage.removeItem("token"); // ✅ Remove stored authentication token
-        setUser(null); // ✅ Reset user state
-        navigate("/login"); // ✅ Redirect to login page
+        localStorage.removeItem("token");
+        setUser(null);
+        navigate("/login");
     };
 
+    const handleNavigation = (path) => {
+        navigate(path);
+        setMobileOpen(false); // ✅ Close mobile menu on navigation
+    };
+
+    const menuItems = user ? [
+        { text: "Recipes", path: "/recipes" },
+        { text: "Saved Recipes", path: "/saved-recipes" },
+        { text: "Grocery List", path: "/grocery-list" },
+        { text: "Logout", action: handleLogout }
+    ] : [
+        { text: "Recipes", path: "/recipes" },
+        { text: "Login", path: "/login" },
+        { text: "Signup", path: "/signup" }
+    ];
+
     return (
-        <AppBar position="static" sx={{ backgroundColor: "var(--primary-color)" , width: "50vw", maxWidth: "800px", margin: "0 auto" }}>
+        <AppBar 
+            position="static" 
+            sx={{ backgroundColor: "var(--primary-color)", width: "50vw", maxWidth: "800px", margin: "0 auto" }}
+        >
             <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 
                 {/* ✅ Logo & Home Link */}
                 <Link to="/" className="nav-logo">MealMatch</Link>
 
-                {/* ✅ Desktop Navigation Links (Visible when user is logged in) */}
-                <div className="nav-links">
-                    <Link to="/recipes">Recipes</Link>
-                    {user && <Link to="/saved-recipes">Saved Recipes</Link>}
-                    {user && <Link to="/grocery-list">Grocery List</Link>}
-                </div>
+                {/* ✅ Desktop Navigation (Hidden on Mobile) */}
+                {!isMobile && (
+                    <div className="nav-links">
+                        {menuItems.map((item, index) => (
+                            item.action ? (
+                                <Button key={index} color="inherit" onClick={item.action}>{item.text}</Button>
+                            ) : (
+                                <Button key={index} color="inherit" onClick={() => handleNavigation(item.path)}>{item.text}</Button>
+                            )
+                        ))}
+                    </div>
+                )}
 
-                {/* ✅ Authentication Buttons (Login/Signup or Logout) */}
-                <div className="nav-actions">
-                    {user ? (
-                        <Button 
-                            onClick={handleLogout} 
-                            variant="contained" 
-                            sx={{ backgroundColor: "var(--accent-color)", "&:hover": { backgroundColor: "#e07b39" } }}
-                        >
-                            Logout
-                        </Button>
-                    ) : (
-                        <>
-                            <Button component={Link} to="/login" sx={{ color: "white" }}>
-                                Login
-                            </Button>
-                            <Button component={Link} to="/signup" variant="contained" sx={{ backgroundColor: "var(--accent-color)", "&:hover": { backgroundColor: "#e07b39" } }}>
-                                Signup
-                            </Button>
-                        </>
-                    )}
-                </div>
-
-                {/* ✅ Mobile Menu Icon (Only visible on smaller screens) */}
-                <IconButton 
-                    edge="start" 
-                    color="inherit" 
-                    aria-label="menu" 
-                    sx={{ display: { md: "none" } }} 
-                    onClick={() => setMobileOpen(!mobileOpen)}
-                >
-                    <MenuIcon />
-                </IconButton>
-
+                {/* ✅ Mobile Menu Icon (Hidden on Desktop) */}
+                {isMobile && (
+                    <IconButton edge="end" color="inherit" onClick={() => setMobileOpen(true)}>
+                        <MenuIcon />
+                    </IconButton>
+                )}
             </Toolbar>
 
-            {/* ✅ Collapsible Mobile Menu (Only appears when mobileOpen is true) */}
-            {mobileOpen && (
-                <div className="mobile-nav">
-                    <Link to="/recipes" onClick={() => setMobileOpen(false)}>Recipes</Link>
-                    {user && <Link to="/saved-recipes" onClick={() => setMobileOpen(false)}>Saved Recipes</Link>}
-                    {user && <Link to="/grocery-list" onClick={() => setMobileOpen(false)}>Grocery List</Link>}
-                    {!user && <Link to="/login" onClick={() => setMobileOpen(false)}>Login</Link>}
-                    {!user && <Link to="/signup" onClick={() => setMobileOpen(false)}>Signup</Link>}
-                    {user && (
-                        <Button 
-                            onClick={handleLogout} 
-                            variant="contained" 
-                            sx={{ backgroundColor: "var(--accent-color)", "&:hover": { backgroundColor: "#e07b39" } }}
+            {/* ✅ Mobile Drawer Menu */}
+            <Drawer anchor="right" open={mobileOpen} onClose={() => setMobileOpen(false)}>
+                <List>
+                    {menuItems.map((item, index) => (
+                        <ListItem 
+                            button 
+                            key={index} 
+                            onClick={item.action ? item.action : () => handleNavigation(item.path)}
                         >
-                            Logout
-                        </Button>
-                    )}
-                </div>
-            )}
+                            <ListItemText primary={item.text} />
+                        </ListItem>
+                    ))}
+                </List>
+            </Drawer>
         </AppBar>
     );
 }
