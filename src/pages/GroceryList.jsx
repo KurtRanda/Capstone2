@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../api/api"; // ✅ Import configured API instance
+import api from "../api/api"; 
 import { List, ListItem, ListItemText, Button, Typography, Container, Paper } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -25,13 +25,12 @@ function GroceryList({ user }) {
             // Log the response data to check the structure
             console.log("✅ Grocery List Response:", res.data);
     
-            // Assuming res.data is an array, if not adjust accordingly
-            if (Array.isArray(res.data)) {
-                setGroceryItems(res.data);
-            } else {
-                // If res.data is an object (e.g., { items: [...] })
-                setGroceryItems(res.data.items || []); // Adjust key name if needed
-            }
+            // Access the groceryList key in the response and set the state
+        if (res.data.groceryList && Array.isArray(res.data.groceryList)) {
+            setGroceryItems(res.data.groceryList);
+        } else {
+            setGroceryItems([]); // In case the structure is different or empty
+        }
         } catch (err) {
             console.error("❌ Error fetching grocery list:", err.response ? err.response.data : err);
         }
