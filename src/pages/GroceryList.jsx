@@ -13,7 +13,7 @@ function GroceryList({ user }) {
             fetchGroceryList();
         }
     }, [user]);
-
+    
     const fetchGroceryList = async () => {
         if (!user) return;
         try {
@@ -21,11 +21,22 @@ function GroceryList({ user }) {
             const res = await api.get(`/grocery-list/`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setGroceryItems(res.data);
+    
+            // Log the response data to check the structure
+            console.log("✅ Grocery List Response:", res.data);
+    
+            // Assuming res.data is an array, if not adjust accordingly
+            if (Array.isArray(res.data)) {
+                setGroceryItems(res.data);
+            } else {
+                // If res.data is an object (e.g., { items: [...] })
+                setGroceryItems(res.data.items || []); // Adjust key name if needed
+            }
         } catch (err) {
             console.error("❌ Error fetching grocery list:", err.response ? err.response.data : err);
         }
     };
+    
 
     const togglePurchased = async (itemId) => {
         try {
